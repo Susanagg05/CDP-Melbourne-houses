@@ -1,0 +1,15 @@
+[project]
+name = "cdp-melbourne-houses"
+version = "0.1.0"
+description = "Desarrollo de un proyecto de un proyecto de Ciencia de datos end to end"
+readme = "README.md"
+requires-python = ">=3.12.1"
+dependencies = [
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.0",
+    "numpy>=2.1.3",
+    "pandas>=2.2.3",
+    "pyarrow>=19.0.1",
+    "seaborn>=0.13.2",
+    "ydata-profiling>=4.12.2",
+]
