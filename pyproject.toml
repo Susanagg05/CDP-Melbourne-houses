@@ -5,11 +5,15 @@ description = "Desarrollo de un proyecto de un proyecto de Ciencia de datos end 
 readme = "README.md"
 requires-python = ">=3.12.1"
 dependencies = [
+    "geopandas>=1.0.1",
+    "geoplot>=0.5.1",
     "jupyter>=1.1.1",
+    "mapclassify>=2.8.1",
     "matplotlib>=3.10.0",
     "numpy>=2.1.3",
     "pandas>=2.2.3",
     "pyarrow>=19.0.1",
+    "scikit-learn>=1.6.1",
     "seaborn>=0.13.2",
     "ydata-profiling>=4.12.2",
 ]
