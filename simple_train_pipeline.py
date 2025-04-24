@@ -3,7 +3,7 @@
 # ## By:
 # [Susana Gutiérrez] (https://github.com/Susanagg05)
 #
-# ## Date: 
+# ## Date:
 # 2025-04-07
 #
 # ## Description:
@@ -32,18 +32,17 @@
 
 # 1. Importar librerías necesarias
 from pathlib import Path
-import pandas as pd
+
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.experimental import enable_halving_search_cv
-from sklearn.model_selection import HalvingGridSearchCV
-from xgboost import XGBRegressor
+import pandas as pd
 from joblib import dump
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import HalvingGridSearchCV, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
+from xgboost import XGBRegressor
 
 # 2. Cargar dataset desde URL
 url_data = "https://raw.githubusercontent.com/JoseRZapata/Data_analysis_notebooks/refs/heads/main/data/datasets/Melbourne_housing_FULL_data.csv"
@@ -53,37 +52,56 @@ melbourne_df = pd.read_csv(url_data, low_memory=False)
 melbourne_df.replace(["NULL", "None", "", "?", " ", "  ", " -  "], np.nan, inplace=True)
 
 # 4. Conversión de columnas categóricas si están presentes
-categóricas_base = ["Type", "Method", "Suburb", "Regionname", "CouncilArea"]
-for col in categóricas_base:
+categoricas_base = ["Type", "Method", "Suburb", "Regionname", "CouncilArea"]
+for col in categoricas_base:
     if col in melbourne_df.columns:
         melbourne_df[col] = melbourne_df[col].astype("category")
 
 # 5. Definir variables relevantes
 selected_features = [
-    "Type", "Method", "Suburb", "Rooms", "Distance", "Bathroom", "Landsize",
-    "BuildingArea", "YearBuilt", "Regionname", "CouncilArea", "Price"
+    "Type",
+    "Method",
+    "Suburb",
+    "Rooms",
+    "Distance",
+    "Bathroom",
+    "Landsize",
+    "BuildingArea",
+    "YearBuilt",
+    "Regionname",
+    "CouncilArea",
+    "Price",
 ]
 melbourne_df = melbourne_df[selected_features].copy()
 
 # 6. Convertir columnas numéricas a tipo float
 total_numeric_cols = ["Rooms", "Distance", "Bathroom", "Landsize", "BuildingArea", "YearBuilt"]
-melbourne_df[total_numeric_cols] = melbourne_df[total_numeric_cols].apply(pd.to_numeric, errors="coerce")
+melbourne_df[total_numeric_cols] = melbourne_df[total_numeric_cols].apply(
+    pd.to_numeric, errors="coerce"
+)
+
 
 # 7. Reemplazar outliers extremos por NaN en 'Price'
 lower_bound = melbourne_df["Price"].quantile(0.028)
 upper_bound = melbourne_df["Price"].quantile(0.99)
-melbourne_df.loc[(melbourne_df["Price"] < lower_bound) | (melbourne_df["Price"] > upper_bound), "Price"] = np.nan
+melbourne_df.loc[
+    (melbourne_df["Price"] < lower_bound) | (melbourne_df["Price"] > upper_bound), "Price"
+] = np.nan
 
 # 8. Selección de variables numéricas por correlación
 correlation_threshold = 0.3
-correlation_matrix = melbourne_df[total_numeric_cols + ["Price"]].corr()
+correlation_matrix = melbourne_df[[*total_numeric_cols, "Price"]].corr()
 selected_num_cols = correlation_matrix["Price"].abs().sort_values(ascending=False)
 numeric_features = selected_num_cols[selected_num_cols > correlation_threshold].index.tolist()
-numeric_features.remove("Price")
+if "Price" in numeric_features:
+    numeric_features.remove(
+        "Price"
+    )  # Asegurarse de que 'Price' no esté en las características numéricas
 print("Variables numéricas seleccionadas tras la matriz de correlación:", numeric_features)
 
+
 # 9. Eliminar outliers en variables numéricas seleccionadas usando IQR
-def remove_outliers_iqr(df, numeric_cols):
+def remove_outliers_iqr(df: pd.DataFrame, numeric_cols: list[str]) -> pd.DataFrame:
     df_filtered = df.copy()
     for col in numeric_cols:
         Q1 = df[col].quantile(0.25)
@@ -91,9 +109,13 @@ def remove_outliers_iqr(df, numeric_cols):
         IQR = Q3 - Q1
         lower_bound = Q1 - 1.5 * IQR
         upper_bound = Q3 + 1.5 * IQR
-        df_filtered = df_filtered[(df_filtered[col] >= lower_bound) & (df_filtered[col] <= upper_bound)]
+        df_filtered = df_filtered[
+            (df_filtered[col] >= lower_bound) & (df_filtered[col] <= upper_bound)
+        ]
     return df_filtered
 
+
+# Llamada a la función con las anotaciones de tipo corregidas
 melbourne_df = remove_outliers_iqr(melbourne_df, numeric_features)
 
 # 10. Separar variables predictoras y objetivo
@@ -107,26 +129,26 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # 12. Construcción de pipelines para preprocesamiento
 categorical_features = ["Type", "Method", "Suburb", "Regionname", "CouncilArea"]
 
-numeric_pipeline = Pipeline(steps=[
-    ("imputer", SimpleImputer(strategy="median")),
-    ("scaler", MinMaxScaler())
-])
+numeric_pipeline = Pipeline(
+    steps=[("imputer", SimpleImputer(strategy="median")), ("scaler", MinMaxScaler())]
+)
 
-categorical_pipeline = Pipeline(steps=[
-    ("imputer", SimpleImputer(strategy="most_frequent")),
-    ("encoder", OneHotEncoder(drop="first", handle_unknown="ignore", sparse_output=False))
-])
+categorical_pipeline = Pipeline(
+    steps=[
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("encoder", OneHotEncoder(drop="first", handle_unknown="ignore", sparse_output=False)),
+    ]
+)
 
-preprocessor = ColumnTransformer(transformers=[
-    ("num", numeric_pipeline, numeric_features),
-    ("cat", categorical_pipeline, categorical_features)
-])
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", numeric_pipeline, numeric_features),
+        ("cat", categorical_pipeline, categorical_features),
+    ]
+)
 
 # 13. Pipeline de modelado
-xgb_pipeline = Pipeline([
-    ("preprocessor", preprocessor),
-    ("model", XGBRegressor(random_state=42))
-])
+xgb_pipeline = Pipeline([("preprocessor", preprocessor), ("model", XGBRegressor(random_state=42))])
 
 # 14. Hiperparámetros y búsqueda extendida
 parametros_xgb = {
@@ -171,6 +193,3 @@ if r2 > BASELINE_SCORE:
     print("\n✅ Modelo guardado en la carpeta 'models'")
 else:
     print("\n❌ Modelo no superó el umbral mínimo de validación")
-
-
-
