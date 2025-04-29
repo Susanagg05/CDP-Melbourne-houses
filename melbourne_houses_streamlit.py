@@ -1,4 +1,3 @@
-
 import os
 
 import pandas as pd
@@ -17,9 +16,7 @@ def get_user_input() -> pd.DataFrame:
     """Collect user input from the sidebar and return it as a DataFrame."""
     st.sidebar.header("🏡 Melbourne Property Details")
 
-    type_ = st.sidebar.selectbox(
-        "Property Type", options=["h", "t", "u"]
-    )
+    type_ = st.sidebar.selectbox("Property Type", options=["h", "t", "u"])
     method = st.sidebar.selectbox(
         "Sale Method", options=["S", "SP", "PI", "VB", "SA", "SN", "W", "PN"]
     )
