@@ -11,4 +11,4 @@ seaborn==0.13.2
 xgboost==1.7.6
 streamlit==1.33.0
 joblib==1.2.0
-setuptools>=67.0.0
+setuptools==68.2.2
