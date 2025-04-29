@@ -38,12 +38,11 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import sklearn.experimental.enable_halving_search_cv  # noqa: F401
 from joblib import dump
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.experimental import enable_halving_search_cv  # 🛡️ Esto debe ir primero
-from sklearn.model_selection import HalvingGridSearchCV, train_test_split
 from sklearn.model_selection import HalvingGridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
