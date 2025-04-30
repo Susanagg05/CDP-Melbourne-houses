@@ -20,9 +20,18 @@ def get_user_input() -> pd.DataFrame:
     method = st.sidebar.selectbox(
         "Sale Method", options=["S", "SP", "PI", "VB", "SA", "SN", "W", "PN"]
     )
-    suburb = st.sidebar.text_input("Suburb", "Abbotsford")
-    regionname = st.sidebar.text_input("Region", "Northern Metropolitan")
-    councilarea = st.sidebar.text_input("Council Area", "Yarra")
+    suburb = st.sidebar.selectbox(
+        "Suburb", options=["Abbotsford", "Northcote", "Richmond", "Carlton", "Fitzroy"]
+    )
+    regionname = st.sidebar.selectbox(
+        "Region", options=[
+            "Northern Metropolitan", "Southern Metropolitan", 
+            "Western Metropolitan", "Eastern Metropolitan"
+        ]
+    )
+    councilarea = st.sidebar.selectbox(
+        "Council Area", options=["Yarra", "Moreland", "Melbourne", "Darebin", "Port Phillip"]
+    )
 
     rooms = st.sidebar.slider("Number of Rooms", min_value=1, max_value=10, value=3)
     bathroom = st.sidebar.slider("Number of Bathrooms", min_value=1, max_value=5, value=1)
