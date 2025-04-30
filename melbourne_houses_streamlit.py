@@ -24,10 +24,13 @@ def get_user_input() -> pd.DataFrame:
         "Suburb", options=["Abbotsford", "Northcote", "Richmond", "Carlton", "Fitzroy"]
     )
     regionname = st.sidebar.selectbox(
-        "Region", options=[
-            "Northern Metropolitan", "Southern Metropolitan", 
-            "Western Metropolitan", "Eastern Metropolitan"
-        ]
+        "Region",
+        options=[
+            "Northern Metropolitan",
+            "Southern Metropolitan",
+            "Western Metropolitan",
+            "Eastern Metropolitan",
+        ],
     )
     councilarea = st.sidebar.selectbox(
         "Council Area", options=["Yarra", "Moreland", "Melbourne", "Darebin", "Port Phillip"]
