@@ -59,12 +59,11 @@ def main() -> None:
     st.set_page_config(page_title="Melbourne House Price Predictor 🏠", page_icon="📈")
 
     # Mostrar tu imagen local arriba del título
-    #col1, col2, col3 = st.columns([1, 6, 1])
-    #with col2:
-        #st.image("melbournehouses.jpg", width=700)
+    # col1, col2, col3 = st.columns([1, 6, 1])
+    # with col2:
+    # st.image("melbournehouses.jpg", width=700)
     # st.image("melbournehouses.jpg")
     st.image("melbournehouses.jpg", use_column_width=True)
-
 
     st.title("📈 Melbourne Housing Price Estimator")
     st.write("Estimate the sale price of a property in Melbourne using a trained XGBoost model.")
