@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 import streamlit as st
 from joblib import load
@@ -30,8 +31,14 @@ def batch_prediction_tab(model: Pipeline) -> None:
             st.dataframe(df.head())
 
             required_cols = [
-                "Type", "Method", "Suburb", "Rooms",
-                "Bathroom", "YearBuilt", "Regionname", "CouncilArea"
+                "Type",
+                "Method",
+                "Suburb",
+                "Rooms",
+                "Bathroom",
+                "YearBuilt",
+                "Regionname",
+                "CouncilArea",
             ]
             missing_cols = [col for col in required_cols if col not in df.columns]
             if missing_cols:
@@ -57,16 +64,18 @@ def batch_prediction_tab(model: Pipeline) -> None:
     else:
         st.info("Please upload a CSV file with Melbourne property information.")
         st.caption("Sample format:")
-        sample_data = pd.DataFrame({
-            "Type": ["h", "u"],
-            "Method": ["S", "PI"],
-            "Suburb": ["Abbotsford", "Fitzroy"],
-            "Rooms": [3, 2],
-            "Bathroom": [1, 2],
-            "YearBuilt": [1990, 2005],
-            "Regionname": ["Northern Metropolitan", "Eastern Metropolitan"],
-            "CouncilArea": ["Yarra", "Melbourne"]
-        })
+        sample_data = pd.DataFrame(
+            {
+                "Type": ["h", "u"],
+                "Method": ["S", "PI"],
+                "Suburb": ["Abbotsford", "Fitzroy"],
+                "Rooms": [3, 2],
+                "Bathroom": [1, 2],
+                "YearBuilt": [1990, 2005],
+                "Regionname": ["Northern Metropolitan", "Eastern Metropolitan"],
+                "CouncilArea": ["Yarra", "Melbourne"],
+            }
+        )
         st.dataframe(sample_data)
 
 
